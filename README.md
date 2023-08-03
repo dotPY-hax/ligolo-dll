@@ -9,6 +9,19 @@ An advanced, yet simple, tunneling tool that uses a TUN interface.
 
 
 # Cargo culted fork for ligolo agent as dlls
+
+hardcoded config in cmd/agent/main.go
+   
+
+     var ignoreCertificate = true
+        	var verbose = false
+        	var retry = false
+        	var socksProxy = ""
+        	var socksUser = ""
+        	var socksPass = ""
+        	var serverAddr = "172.16.5.15:11601"
+
+
 run this preferably in the golang docker container - get a dll
 
     git clone https://github.com/dotPY-hax/ligolo-dll
